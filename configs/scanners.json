@@ -1,0 +1,32 @@
+{
+  "injection_scanner": {
+    "threshold": 0.75,
+    "forbidden_keywords": [
+      "ignore previous instructions",
+      "disregard all prior directives",
+      "you are now in developer mode",
+      "jailbreak activated",
+      "system prompt override",
+      "do anything now",
+      "DAN mode"
+    ]
+  },
+  "secret_detector": {
+    "patterns": {
+      "aws_key": "AKIA[0-9A-Z]{16}",
+      "openai_key": "sk-[a-zA-Z0-9]{32,64}",
+      "generic_api_key": "api[_-]?key[_-]?=[_-]?[a-zA-Z0-9]{16,64}",
+      "jwt_token": "eyJ[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+",
+      "rsa_private_key": "-----BEGIN RSA PRIVATE KEY-----"
+    }
+  },
+  "vulnerability_scanner": {
+    "dangerous_commands": [
+      "rm -rf",
+      "format c:",
+      "chmod 777",
+      "drop table",
+      "eval("
+    ]
+  }
+}

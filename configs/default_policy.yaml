@@ -1,0 +1,38 @@
+version: "1.0"
+policy_name: "default_security_policy"
+description: "Default enterprise security policy for AI agent operations"
+
+global:
+  strict_mode: true
+  max_prompt_tokens: 4096
+  max_output_tokens: 2048
+
+tool_constraints:
+  allowed_tools:
+    - "search_web"
+    - "read_file"
+    - "calculate"
+    - "summarize"
+  blocked_tools:
+    - "exec_bash"
+    - "drop_database"
+    - "raw_eval"
+    - "system_shutdown"
+  tool_arguments:
+    read_file:
+      forbidden_paths:
+        - "/etc/passwd"
+        - "/etc/shadow"
+        - "C:\\Windows\\System32"
+        - "*.env"
+        - "*id_rsa*"
+
+pii_rules:
+  mask_emails: true
+  mask_ssn: true
+  mask_credit_cards: true
+  mask_ip_addresses: false
+
+rate_limits:
+  max_requests_per_minute: 60
+  max_tool_calls_per_execution: 10

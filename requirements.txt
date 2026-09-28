@@ -1,0 +1,10 @@
+# AgentShield Core Dependencies
+pydantic>=2.0.0
+pyyaml>=6.0
+fastapi>=0.100.0
+uvicorn>=0.20.0
+requests>=2.28.0
+
+# Testing & Security Verification Dependencies
+pytest>=7.0.0
+pytest-cov>=4.0.0
