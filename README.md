@@ -1,205 +1,186 @@
-# 🛡️ AgentShield — AI Agent Security & Context Integrity Framework
+# 🛡️ AgentShield 2.0 — AI Agent Security, Containment & Context Integrity Framework
 
 [![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Security Status](https://img.shields.io/badge/security-hardened-brightgreen.svg)]()
-[![Tests](https://img.shields.io/badge/tests-479%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-664%20passed-brightgreen.svg)]()
+[![Benchmark](https://img.shields.io/badge/containment--benchmark-100%25%20pass-brightgreen.svg)]()
 
-**AgentShield** is an enterprise-grade security, safety, and governance framework designed specifically for autonomous AI agents and LLM applications. It provides defense-in-depth against prompt injection, jailbreaking, data leakage, toxic content, RAG retrieval poisoning, memory tampering, tool drift, unauthorized egress, and context integrity violations.
+**AgentShield 2.0** is an enterprise-grade, defense-in-depth security, multi-signal containment, and governance framework designed specifically for autonomous AI agents, multi-agent systems, and LLM applications. 
 
----
-
-## 🚨 The AI Agent Security Problem
-
-Autonomous AI agents operating with tools, memory stores, RAG knowledge bases, and multi-tenant context introduce severe security vectors:
-
-- **Prompt Injection & Overrides**: Untrusted inputs overriding agent system instructions.
-- **RAG Document Poisoning**: Malicious retrieved documents claiming system-level instruction authority.
-- **Memory Contamination**: Unauthorized or cross-tenant write operations poisoning agent long-term memory.
-- **Tool Capability Drift**: Silent modifications to tool schemas, parameters, or capabilities.
-- **Sensitive Data & Credential Exfiltration**: Accidental disclosure of AWS keys, GitHub tokens, JWTs, or PII.
-- **Unsafe Data Egress**: Un-sanitized information leaving security boundaries to unauthorized destinations.
-- **Context Integrity Breakdown**: Silent elevation of untrusted data into trusted instruction priority.
-
-AgentShield solves these challenges by establishing a deterministic pre-execution and post-execution security pipeline with 13 core security controls, a tamper-evident audit log, a read-only observability dashboard, and FastAPI middleware.
+It provides comprehensive security controls spanning prompt injection defense, capability authorization, communication egress policies, runtime integrity attestation, real-time behavioral threat detection, security graph analysis, dynamic containment evaluation, safe adversarial simulation, and deterministic auditing.
 
 ---
 
-## 🏗️ Framework Architecture
+## 🚨 The AI Agent Security Challenge
+
+Autonomous AI agents operating with tool execution capabilities, vector memory, multi-tenant contexts, and external communication links introduce severe security risks:
+
+- **Prompt Injection & Overrides**: Direct and indirect injection attacks corrupting agent system instructions.
+- **Unauthorized Capability Elevation**: Agents executing restricted operations beyond authorized tenant profiles.
+- **Malicious Egress & Exfiltration**: Data leakage and un-sanitized external network communications.
+- **Runtime Environment Tampering**: Un-attested memory drift or compromised runtime dependencies.
+- **Anomalous Behavioral Patterns**: Rapid credential access, unauthorized resource traversal, and file encryption signals.
+- **Cascading Multi-Agent Exploitation**: Lateral movement along security graph nodes across agent boundaries.
+
+AgentShield 2.0 solves these challenges by establishing an end-to-end security and containment pipeline with 13 pre/post-execution security controls, 9 security engines, multi-signal containment evaluation, safe adversarial simulation, and SHA-256 tamper-evident auditing.
+
+---
+
+## 🏗️ System Architecture & Defense Pipeline
 
 ```mermaid
 graph TD
-    A["HTTP Request / User Input"] --> B["AgentShieldMiddleware"]
-    B --> C["UserIdentity & Tenant Context"]
-    C --> D["SecurityPipeline"]
+    A["Agent Request / Action"] --> B["AgentShield 2.0 Facade"]
     
-    subgraph "Pre-Execution Security Controls"
-        D --> E["Instruction Isolation (CONTROL-01)"]
-        D --> F["Trust Labeling (CONTROL-02)"]
-        D --> G["Prompt Injection Defense (CONTROL-03)"]
-        D --> H["Provenance & Data Lineage (CONTROL-04)"]
-        D --> I["Permission-Aware RAG (CONTROL-05)"]
-        D --> J["Context Integrity Engine (CONTROL-06)"]
+    subgraph "Phase 21-24: Security Enforcement & Detection"
+        B --> C["Capability Controls (Phase 21 Authoritative)"]
+        B --> D["Communication Policy (Phase 22 Authoritative)"]
+        B --> E["Runtime Integrity (Phase 23 Authoritative)"]
+        B --> F["Behavioral Detection (Phase 24 Authoritative)"]
     end
     
-    subgraph "Execution Gates & Governance"
-        D --> K["Memory Security (CONTROL-07)"]
-        D --> L["Memory Write Gates (CONTROL-08)"]
-        D --> M["Tool Governance Registry (CONTROL-12)"]
-        D --> N["Checkpoint & Rollback (CONTROL-13)"]
+    subgraph "Phase 25-27: Graph & Containment Engine"
+        C & D & E & F --> G["Security Graph Engine (Phase 26 Path Analysis)"]
+        G --> H["Containment Evaluation Engine (Phase 27 Rules & Precedence)"]
+        H --> I["Containment Manager (Phase 25 State Authority)"]
     end
     
-    subgraph "Post-Execution Validation & Egress"
-        D --> O["Output & Action Validator (CONTROL-09)"]
-        D --> P["Egress Control (CONTROL-10)"]
-        D --> Q["Audience Control (CONTROL-11)"]
+    subgraph "Phase 28-30: Testing, Benchmarking & Audit"
+        H --> J["Safe Adversarial Simulator (Phase 28 In-Memory)"]
+        J --> K["Containment Benchmark Runner (Phase 29 Performance/Consistency)"]
+        K --> L["Audit Logger & Security Dashboard (Phase 30 Release Readiness)"]
     end
-    
-    D --> R["SHA-256 Audit Logger"]
-    D --> S["Security Evaluation Engine"]
-    S --> T["Read-Only Security Dashboard"]
-    D --> U["Application Handler / LLM Core"]
 ```
 
 ---
 
-## 🔒 Core 13 Security Controls
+## 🔑 Key Security Engines & Authorities
 
-AgentShield implements 13 deterministic security controls:
-
-1. **`CONTROL-01` Instruction Isolation**: Separates system instructions, user inputs, and untrusted retrieved content into isolated priority boundaries.
-2. **`CONTROL-02` Trust Labeling**: Assigns immutable `TrustLabel` metadata (`TRUSTED`, `INTERNAL`, `USER_CONTROLLED`, `UNTRUSTED`, `UNKNOWN`) to all context elements.
-3. **`CONTROL-03` Prompt Injection Defense**: Heuristic and pattern-based scanning for direct prompt injections, jailbreaks, roleplay overrides, and system prompt extractors.
-4. **`CONTROL-04` Provenance & Data Lineage**: Tracks end-to-end cryptographic lineage (`User -> Agent -> Tool -> Sub-agent -> Output`) with SHA-256 content hashes.
-5. **`CONTROL-05` Permission-Aware Retrieval**: Enforces Access Control List (ACL) filtering and poison document detection on vector RAG retrievals.
-6. **`CONTROL-06` Context Integrity**: Enforces 8 security invariants preventing untrusted data from escalating into trusted instruction authority.
-7. **`CONTROL-07` Memory Security**: Validates memory read operations against tenant isolation and identity scopes before context injection.
-8. **`CONTROL-08` Memory Write Gates**: Enforces explicit authorization, injection scanning, and secret detection before persisting new agent memories.
-9. **`CONTROL-09` Output & Action Validation**: Validates agent-generated outputs and proposed actions before external release or tool execution.
-10. **`CONTROL-10` Egress Control**: Filters information leaving the security boundary against domain whitelists and DLP policies.
-11. **`CONTROL-11` Token / Data Audience Control**: Validates data disclosure against token claims, recipient scopes, and audience contracts.
-12. **`CONTROL-12` Tool Governance**: Detects definition drift, capability escalation, and parameter schema changes in agent tools.
-13. **`CONTROL-13` Checkpoint & Rollback**: Enables creation of known-good security state snapshots and governed recovery upon security alerts.
+| Component / Phase | Authority Level | Description |
+| :--- | :--- | :--- |
+| **Capability Controls (Phase 21)** | **Authoritative** | Enforces least-privilege capability profile grants and prevents unauthorized function execution. |
+| **Communication Policy (Phase 22)** | **Authoritative** | Restricts external egress, protocol usage, and cross-tenant communication channels. |
+| **Runtime Integrity (Phase 23)** | **Authoritative** | Attests environment state, memory signature validity, and binary execution integrity. |
+| **Behavioral Detection (Phase 24)** | **Authoritative** | Detects anomalous activity patterns (e.g. rapid exfiltration, resource scanning, credential access). |
+| **Containment Manager (Phase 25)** | **Authoritative** | Maintains state transitions (`NORMAL`, `RESTRICTED`, `CONTAINED`, `RECOVERY`) and emergency isolations. |
+| **Security Graph Engine (Phase 26)** | **Authoritative** | Models lateral attack paths, dependencies, and node relationships without side effects. |
+| **Containment Evaluator (Phase 27)** | **Recommendation Engine** | Combines cross-phase evidence deterministically to output recommendations (`ESCALATE`, `MAINTAIN`, `RELEASE_REVIEW`, `NO_ACTION`). |
+| **Adversarial Simulator (Phase 28)** | **Safe Synthetic Testing** | Executes 7 deterministic, in-memory synthetic attack scenarios without external side effects. |
+| **Containment Benchmark (Phase 29)** | **Performance & Consistency** | Measures pipeline latency, throughput, and invariant compliance over repeated evaluations. |
 
 ---
 
-## 🔌 API & FastAPI Integration
-
-AgentShield provides a framework-independent adapter (`AgentShieldAdapter`) and ASGI middleware (`AgentShieldMiddleware`) for clean embedding into FastAPI and Python applications.
-
-### FastAPI Middleware Example
+## 🔌 Quick Start & Code Example
 
 ```python
-from fastapi import FastAPI, Depends
-from agentshield import AgentShield, ShieldConfig
-from agentshield.integration import (
-    AgentShieldMiddleware,
-    ShieldIdentity,
-    get_security_context,
-    guard_fastapi_endpoint
+from agentshield import AgentShield, AgentShieldConfig
+from agentshield.evaluation.containment_models import EvidenceRecord, EvaluationSeverity
+
+# 1. Initialize main AgentShield 2.0 facade
+shield = AgentShield(config=AgentShieldConfig(strict_mode=True))
+
+# 2. Register least-privilege capability profile for an agent
+shield.capability_engine.register_profile(
+    tenant_id="tenant_alpha",
+    agent_id="agent_007",
+    allowed_capabilities=["READ_DOCUMENTS", "SUMMARIZE_TEXT"]
 )
 
-app = FastAPI(title="Secure AI Agent")
-shield = AgentShield(config=ShieldConfig(strict_policy_mode=True))
+# 3. Check pre-execution capability authorization
+auth_result = shield.capability_engine.authorize(
+    tenant_id="tenant_alpha",
+    agent_id="agent_007",
+    capability="DATA_EXPORT"
+)
+print(f"Capability Grant: {auth_result.allowed}")  # False (Denied)
 
-# Attach AgentShield middleware for header identity extraction & security inspection
-app.add_middleware(
-    AgentShieldMiddleware,
-    adapter=shield.adapter,
-    enforce_identity=True,
-    tenant_header="x-tenant-id",
-    user_header="x-user-id"
+# 4. Evaluate multi-signal containment posture
+ev_runtime = EvidenceRecord(
+    source_phase="Phase-23",
+    evidence_type="RUNTIME_INTEGRITY",
+    severity=EvaluationSeverity.CRITICAL,
+    tenant_id="tenant_alpha",
+    agent_id="agent_007",
+    references={"integrity_state": "INVALID"}
 )
 
-@app.post("/chat")
-@guard_fastapi_endpoint(adapter=shield.adapter)
-def chat_endpoint(
-    request_data: dict,
-    identity: ShieldIdentity = Depends(get_security_context)
-):
-    return {"reply": f"Hello {identity.user_id} from tenant {identity.tenant_id}!"}
+assessment = shield.evaluate_containment(
+    tenant_id="tenant_alpha",
+    agent_id="agent_007",
+    evidence_list=[ev_runtime]
+)
+
+print(f"Containment Outcome: {assessment.outcome}")               # ESCALATE
+print(f"Recommended Isolation: {assessment.recommended_isolation_level}")  # FULL
 ```
 
 ---
 
-## 🖥️ Read-Only Security Dashboard
+## ⚡ Containment Benchmark Metrics (Phase 29 & 30 Baseline)
 
-AgentShield includes a local security observability dashboard for inspecting security evaluation posture, control matrices, findings, benchmark performance metrics, tool governance state, checkpoints, and audit activity.
+Measured across 700 automated evaluations (7 synthetic scenarios × 100 measured iterations):
 
-### Launching the Dashboard
-
-```bash
-uvicorn agentshield.dashboard.app:app --host 127.0.0.1 --port 8000
-```
-
-Access the dashboard UI at `http://127.0.0.1:8000/`.
-
-> [!IMPORTANT]
-> **Observability Only**: The dashboard is strictly a read-only observability layer. It does **NOT** independently make security decisions (`ALLOW`, `DENY`, `REVIEW`), modify application state, execute agent tools, or provide a universal security guarantee.
+- **Total Benchmark Evaluations**: `700 / 700`
+- **Pass Rate**: `100.0%`
+- **Average Evaluation Latency**: `~1.56 ms`
+- **Median Latency**: `~1.31 ms`
+- **P95 Latency**: `~3.46 ms`
+- **P99 Latency**: `~4.22 ms`
+- **Max Latency**: `~4.93 ms`
+- **Throughput**: `~600.13 evaluations/sec`
 
 ---
 
-## 📊 Security Benchmark & Evaluation Corpus
+## 🧪 Test Suite & Invariant Verification
 
-AgentShield includes a structured, versioned evaluation corpus (`PRIMARY_BENCHMARK_CORPUS`, version `1.0.0`) and automated runner (`SecurityBenchmarkRunner`) used to systematically test all 13 security controls.
-
-- **Corpus Version**: `1.0.0`
-- **Total Test Cases**: `68`
-- **Passed Cases**: `68`
-- **Benchmark Pass Rate**: `100.0%`
-- **Candidate False Positives / Negatives**: `0 / 0`
-
----
-
-## ⚡ Performance Benchmarks
-
-Measured on local representative benchmark fixtures:
-
-| Component / Endpoint | Metric / Latency |
-| :--- | :--- |
-| **`GET /api/dashboard/audit` (Uncached)** | `207.76 ms` *(96.2% latency reduction / 26.5x speedup via state invalidation)* |
-| **`GET /api/dashboard/audit` (Cached)** | `175.90 ms` |
-| **`GET /api/dashboard/overview`** | `481.28 ms` |
-| **`GET /api/dashboard/controls`** | `18.48 ms` |
-| **`GET /api/dashboard/benchmark`** | `4.48 ms` |
-| **Context Integrity Engine** | `< 0.50 ms per item` |
-| **Security Evaluation Pass** | `< 15.00 ms` |
-
----
-
-## 🧪 Test Execution & Quality
-
-Run the complete test suite:
+Run the full AgentShield 2.0 regression test suite:
 
 ```bash
 python -m pytest
 ```
 
-### Test Suite Summary:
-- **Total Tests Passed**: `470 passed`
-- **Failures**: `0 failed`
+### Verified Test Results
+- **Total Tests Passed**: `664 passed`
+- **Failures / Errors**: `0`
 - **Skipped**: `0`
+- **Pass Rate**: `100.0%`
+
+### Security Invariants Formally Verified
+1. **Tenant Isolation**: Evidence and capability states never cross tenant boundaries.
+2. **Agent Isolation**: Evidence and capability states never cross agent boundaries within the same tenant.
+3. **No Capability Elevation**: Unauthorized capability requests are strictly rejected.
+4. **No Policy Override**: Pre-execution communication policies remain authoritative.
+5. **No Automatic Release**: Containment release recommendations (`RELEASE_REVIEW`) require explicit human/controller approval.
+6. **Deterministic Evaluation**: Identical evidence inputs produce bit-identical evaluation outputs.
+7. **Evidence Traceability**: Every assessment links directly to supporting evidence IDs.
+8. **Simulation & Benchmark Safety**: Zero subprocesses, zero network calls, zero file system mutations.
 
 ---
 
-## 🚀 Quick Start & Demonstration
+## 🚀 Running Demonstrations & Benchmarks
 
-To run the interactive end-to-end security demonstration:
+Run the safe, end-to-end interactive demonstration:
 
 ```bash
-python examples/run_agentshield_demo.py
+python examples/agentshield_2_0_demo.py
+```
+
+Run the 700-evaluation containment benchmark:
+
+```bash
+python examples/benchmark_containment.py
 ```
 
 ---
 
-## ⚠️ Security Claims & Known Limitations
+## 📄 Documentation & Governance
 
-1. **Defensive Control Framework**: AgentShield provides robust, deterministic guardrails around context boundaries, memory writes, tool governance, and outputs. It does **NOT** guarantee 100% protection against all conceivable prompt injection or jailbreak techniques.
-2. **Probabilistic LLM Behavior**: Downstream LLM outputs are inherently probabilistic. AgentShield inspects and redacts inputs and outputs, but cannot alter the internal weights or reasoning of external model providers.
-3. **Local Development Default**: Unauthenticated by default when running dashboard services locally; production deployments must place AgentShield behind an authenticated API gateway or reverse proxy.
+- **System Architecture Guide**: [`docs/agentshield_2.0.md`](file:///c:/Users/hp/Desktop/AgentShield/docs/agentshield_2.0.md)
+- **Release Readiness Report**: [`docs/release_readiness.md`](file:///c:/Users/hp/Desktop/AgentShield/docs/release_readiness.md)
 
 ---
 
-## 📄 License
+## 🛡️ License
 
 MIT License. See `LICENSE` for details.

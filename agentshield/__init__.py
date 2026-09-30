@@ -49,8 +49,17 @@ from agentshield.integration import (
     ShieldActionRequest,
     ShieldResponse
 )
+from agentshield.capabilities import CapabilityEngine
+from agentshield.communication import CommunicationPolicyEngine
+from agentshield.integrity import RuntimeIntegrityEngine
+from agentshield.behavior import BehaviorEngine
+from agentshield.containment import ContainmentManager
+from agentshield.graph import SecurityGraphEngine
+from agentshield.evaluation import ContainmentEvaluationEngine
+from agentshield.simulation import SimulationExecutor
+from agentshield.benchmark import BenchmarkRunner
 
-__version__ = "0.1.0"
+__version__ = "0.2.2"
 
 class AgentShield:
     """Convenience facade for AgentShield security initialization."""
@@ -60,6 +69,42 @@ class AgentShield:
         self.pipeline = SecurityPipeline(config=self.config)
         self.agent_wrapper = ShieldedAgent(config=self.config)
         self.policy_engine = PolicyEngine(policy_file_path=self.config.policy_file_path)
+        self.capability_engine = CapabilityEngine(audit_logger=self.pipeline.audit_logger)
+        self.communication_engine = CommunicationPolicyEngine(
+            audit_logger=self.pipeline.audit_logger,
+            capability_engine=self.capability_engine
+        )
+        self.integrity_engine = RuntimeIntegrityEngine(
+            audit_logger=self.pipeline.audit_logger,
+            capability_engine=self.capability_engine,
+            comm_engine=self.communication_engine
+        )
+        self.behavior_engine = BehaviorEngine(
+            audit_logger=self.pipeline.audit_logger,
+            capability_engine=self.capability_engine,
+            comm_engine=self.communication_engine,
+            integrity_engine=self.integrity_engine
+        )
+        self.containment_manager = ContainmentManager(
+            audit_logger=self.pipeline.audit_logger,
+            capability_engine=self.capability_engine,
+            comm_engine=self.communication_engine,
+            integrity_engine=self.integrity_engine
+        )
+        self.graph_engine = SecurityGraphEngine(
+            audit_logger=self.pipeline.audit_logger
+        )
+        self.evaluation_engine = ContainmentEvaluationEngine(
+            audit_logger=self.pipeline.audit_logger,
+            capability_engine=self.capability_engine,
+            comm_engine=self.communication_engine,
+            integrity_engine=self.integrity_engine,
+            behavior_engine=self.behavior_engine,
+            containment_manager=self.containment_manager,
+            graph_engine=self.graph_engine
+        )
+        self.simulation_executor = SimulationExecutor(shield=self)
+        self.benchmark_runner = BenchmarkRunner(shield=self)
         self.adapter = AgentShieldAdapter(pipeline=self.pipeline, config=self.config)
 
     def guard(self, fn):

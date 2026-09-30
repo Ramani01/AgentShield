@@ -41,10 +41,12 @@ class AgentShieldAdapter:
     def __init__(
         self,
         pipeline: Optional[SecurityPipeline] = None,
-        config: Optional[ShieldConfig] = None
+        config: Optional[ShieldConfig] = None,
+        capability_engine: Optional[Any] = None
     ):
         self.config = config or ShieldConfig()
         self.pipeline = pipeline or SecurityPipeline(config=self.config)
+        self.capability_engine = capability_engine
 
     def process_request(self, request: ShieldRequest) -> ShieldResponse:
         """
@@ -63,6 +65,24 @@ class AgentShieldAdapter:
                 )
 
         identity = request.identity.to_user_identity() if request.identity else UserIdentity(user_id="anonymous", tenant_id="default")
+
+        if self.capability_engine:
+            from agentshield.capabilities.models import AgentCapability, CapabilityCheckRequest
+            cap_res = self.capability_engine.check_capability(
+                CapabilityCheckRequest(
+                    capability=AgentCapability.READ_DOCUMENTS,
+                    agent_id="default_agent",
+                    tenant_id=identity.tenant_id,
+                    identity=identity
+                )
+            )
+            if not cap_res.allowed:
+                return ShieldResponse(
+                    decision=ShieldDecision.DENY,
+                    allowed=False,
+                    reason=f"Capability denied: {cap_res.reason}",
+                    violations=[cap_res.reason]
+                )
 
         try:
             # 1. Inspect input prompt for injections, jailbreaks, secrets, PII
@@ -206,6 +226,25 @@ class AgentShieldAdapter:
         Validates proposed agent action against safety policies and governance gates.
         """
         identity = request.identity.to_user_identity() if request.identity else UserIdentity(user_id="anonymous", tenant_id="default")
+
+        if self.capability_engine:
+            from agentshield.capabilities.models import AgentCapability, CapabilityCheckRequest
+            cap_res = self.capability_engine.check_capability(
+                CapabilityCheckRequest(
+                    capability=AgentCapability.USE_TOOLS,
+                    agent_id="default_agent",
+                    tenant_id=identity.tenant_id,
+                    identity=identity,
+                    target=request.tool_id
+                )
+            )
+            if not cap_res.allowed:
+                return ShieldResponse(
+                    decision=ShieldDecision.DENY,
+                    allowed=False,
+                    reason=f"Capability denied: {cap_res.reason}",
+                    violations=[cap_res.reason]
+                )
 
         action = AgentAction(
             action_type=request.action_type,

@@ -28,6 +28,18 @@ from agentshield.evaluation.benchmark_models import (
 from agentshield.evaluation.benchmark_cases import PRIMARY_BENCHMARK_CORPUS
 from agentshield.evaluation.benchmark_runner import SecurityBenchmarkRunner
 
+from agentshield.evaluation.containment_models import (
+    EvaluationOutcome,
+    EvaluationSeverity,
+    SEVERITY_RANK,
+    EvidenceRecord,
+    ContainmentAssessment
+)
+from agentshield.evaluation.evidence import EvidenceNormalizer
+from agentshield.evaluation.rules import EvaluationRule, RuleRegistry
+from agentshield.evaluation.explain import DecisionExplainer
+from agentshield.evaluation.containment_engine import ContainmentEvaluationEngine
+
 __all__ = [
     "EvaluationHarness",
     "SecurityScorer",
@@ -51,6 +63,16 @@ __all__ = [
     "SecurityBenchmarkReport",
     "PRIMARY_BENCHMARK_CORPUS",
     "SecurityBenchmarkRunner",
+    "EvaluationOutcome",
+    "EvaluationSeverity",
+    "SEVERITY_RANK",
+    "EvidenceRecord",
+    "ContainmentAssessment",
+    "EvidenceNormalizer",
+    "EvaluationRule",
+    "RuleRegistry",
+    "DecisionExplainer",
+    "ContainmentEvaluationEngine"
 ]
 
 
